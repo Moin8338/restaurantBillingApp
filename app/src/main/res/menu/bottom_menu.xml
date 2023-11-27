@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/tables"
+        android:title="Tables"
+        android:icon="@drawable/baseline_home_24"/>
+
+    <item
+        android:id="@+id/ListItem"
+        android:title="Item List"
+        android:icon="@drawable/baseline_add_24"
+        />
+
+    <item
+        android:id="@+id/ItemOnTable"
+        android:title="Item On Table"
+        android:icon="@drawable/baseline_info_24" />
+
+    <item
+        android:id="@+id/settings"
+        android:title="settings"
+        android:icon="@drawable/baseline_settings_24" />
+
+</menu>

@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="5dp"
+    tools:context=".ItemsOnTable">
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="fill_parent">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:orientation="vertical">
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:orientation="vertical">
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="500dp"
+                   android:orientation="vertical">
+
+
+
+                   <ScrollView
+                       android:layout_width="match_parent"
+                       android:layout_height="fill_parent">
+
+                       <TableLayout
+                           android:id="@+id/foodListTable"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content">
+
+
+                           <TableRow android:background="@color/green" android:padding="5dp">
+                               <TextView
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:layout_weight="0.5"
+                                   android:gravity="center|start"
+                                   android:textColor="@color/white"
+                                   android:text="Index" />
+                               <TextView
+                                   android:layout_width="200dp"
+                                   android:layout_height="wrap_content"
+                                   android:layout_weight="2"
+                                   android:textColor="@color/white"
+                                   android:text="Item" />
+                               <TextView
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:textColor="@color/white"
+                                   android:layout_weight="0.5"
+                                   android:text="Qty" />
+                               <TextView
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:textColor="@color/white"
+                                   android:layout_weight="1"
+                                   android:text="Price" />
+                               <TextView
+                                   android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:textColor="@color/white"
+                                   android:layout_weight="1"
+                                   android:text="Total" />
+                           </TableRow>
+
+
+
+
+
+
+                       </TableLayout>
+
+
+                   </ScrollView>
+
+
+
+
+               </LinearLayout>
+               <TableLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <TableRow android:background="#F0F7F7" android:padding="5dp">
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="3"
+                           android:textStyle="bold"
+                           android:gravity="center"
+                           android:textColor="@color/black"
+                           android:textSize="20dp"
+                           android:text="Total" />
+                       <TextView
+                           android:id="@+id/totalCost"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="1"
+                           android:textStyle="bold"
+                           android:gravity="center"
+                           android:textColor="@color/black"
+                           android:textSize="20dp"
+                           android:text="00000" />
+                   </TableRow>
+
+
+               </TableLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:orientation="horizontal">
+               <androidx.appcompat.widget.AppCompatButton
+                   android:id="@+id/printBill"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center|start"
+                   android:layout_marginTop="15dp"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginBottom="15dp"
+                   android:text="print"
+                   android:textSize="20sp"
+                   android:textColor="@color/white"
+                   android:background="@drawable/login_btn_background"/>
+               <androidx.appcompat.widget.AppCompatButton
+                   android:id="@+id/removeBill"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center|start"
+                   android:layout_marginTop="15dp"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginBottom="15dp"
+                   android:text=" Remove All Item "
+                   android:textSize="20sp"
+                   android:textColor="@color/white"
+
+                   android:background="@drawable/login_btn_background"/>
+               </LinearLayout>
+           </LinearLayout>
+
+
+           <LinearLayout
+               android:id="@+id/billStructure"
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:paddingTop="10dp"
+               android:orientation="vertical">
+               <TextView
+                   android:id="@+id/restaurantName"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:textColor="@color/black"
+                   android:text="Resturant Name"
+                   android:textSize="25dp"/>
+               <TextView
+                   android:id="@+id/restaurantAddress"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_gravity="center"
+                   android:textColor="@color/black"
+                   android:text="Restaurant Address"
+                   android:layout_marginBottom="10dp"
+                   android:textSize="15dp"/>
+
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:paddingLeft="5dp"
+                   android:paddingRight="5dp"
+                   android:layout_marginBottom="5dp"
+                   android:orientation="horizontal">
+
+                   <TextView
+                       android:id="@+id/ownerName"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:gravity="center|start"
+                       android:textColor="@color/black"
+                       android:layout_weight="1"
+                       android:text="Owner Name : Moin Kadiwal"/>
+                   <TextView
+                       android:id="@+id/onwerphone"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:gravity="center|end"
+                       android:textColor="@color/black"
+                       android:layout_weight="1"
+                       android:text="Phone : 9999999999"/>
+
+               </LinearLayout>
+               <LinearLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:paddingLeft="5dp"
+                   android:paddingRight="5dp"
+                   android:layout_marginBottom="10dp"
+                   android:orientation="horizontal">
+
+                   <TextView
+                       android:id="@+id/restaurantGst"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:gravity="center|start"
+                       android:textColor="@color/black"
+                       android:layout_weight="1"
+                       android:text="GST N0 : 1234567890"/>
+                   <TextView
+                       android:id="@+id/billNumber"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:layout_gravity="center"
+                       android:gravity="center|end"
+                       android:textColor="@color/black"
+                       android:layout_weight="1"
+                       android:text="Bill No : 1234332"/>
+
+               </LinearLayout>
+
+               <TableLayout
+                   android:id="@+id/billTable"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content">
+
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@color/black"/>
+
+                   <TableRow
+                       android:padding="5dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="0.5"
+                           android:textStyle="bold"
+                           android:textColor="@color/black"
+                           android:gravity="center|start"
+                           android:text="No." />
+                       <TextView
+                           android:layout_width="200dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="2"
+                           android:textStyle="bold"
+                           android:textColor="@color/black"
+                           android:text="Item" />
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="0.5"
+                           android:textColor="@color/black"
+                           android:textStyle="bold"
+                           android:text="Qty" />
+                       <TextView
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textStyle="bold"
+                           android:layout_weight="1"
+                           android:textColor="@color/black"
+                           android:text="Total" />
+
+                   </TableRow>
+
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@color/black"/>
+
+
+
+
+               </TableLayout>
+
+               <TableLayout
+                   android:layout_width="match_parent"
+                   android:layout_marginTop="15dp"
+                   android:layout_height="wrap_content">
+
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@color/black"/>
+
+                   <TableRow
+                       android:padding="5dp"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content">
+
+
+                       <TextView
+                           android:layout_width="200dp"
+                           android:layout_height="wrap_content"
+                           android:layout_weight="3"
+                           android:textStyle="bold"
+                           android:textColor="@color/black"
+                           android:gravity="center"
+                           android:textSize="20dp"
+                           android:text="Total" />
+                       <TextView
+                           android:id="@+id/totalPrice"
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:textColor="@color/black"
+                           android:textStyle="bold"
+                           android:gravity="center"
+                           android:layout_weight="1"
+                           android:textSize="20dp"
+                           android:text="0000" />
+
+                   </TableRow>
+
+                   <View
+                       android:layout_width="match_parent"
+                       android:layout_height="1dp"
+                       android:background="@color/black"/>
+
+
+
+
+               </TableLayout>
+
+           </LinearLayout>
+
+       </LinearLayout>
+
+   </ScrollView>
+
+</FrameLayout>

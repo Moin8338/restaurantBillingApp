@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment">
+
+
+   <ScrollView
+       android:layout_width="match_parent"
+       android:layout_height="fill_parent">
+
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:padding="10dp"
+           android:layout_marginTop="5dp"
+           android:orientation="vertical">
+
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:background="@color/green"
+               android:layout_marginBottom="20dp"
+               android:text="Update Profile"
+               android:textColor="@color/white"
+               android:textSize="25dp"
+               android:paddingTop="10dp"
+               android:gravity="center|start"
+               android:paddingBottom="10dp"
+               android:paddingLeft="10dp"/>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_name"
+               android:layout_width="match_parent"
+               android:layout_marginBottom="10dp"
+               android:layout_height="wrap_content">
+
+               <EditText
+                   android:id="@+id/input_name"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="text"
+                   android:hint="Name" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_email"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_email"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="textEmailAddress"
+                   android:hint="Email" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_phone"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_phone"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="phone"
+                   android:hint="Phone" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_password"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_password"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="textPassword"
+                   android:hint="Password" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_gts"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_gst"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="text"
+                   android:hint="GST Number" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_restaurantname"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_restaurantname"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="text"
+                   android:hint="Restaurant Name" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+           <com.google.android.material.textfield.TextInputLayout
+               android:id="@+id/input_layout_restaurantaddress"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="10dp"
+               >
+
+               <EditText
+                   android:id="@+id/input_restaurantaddress"
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:inputType="text"
+                   android:hint="Restaurant Address" />
+
+           </com.google.android.material.textfield.TextInputLayout>
+
+
+           <androidx.appcompat.widget.AppCompatButton
+               android:id="@+id/btnAdd"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:text="click  to  Update  Profile"
+               android:textColor="@color/white"
+               android:textSize="15dp"
+               android:paddingTop="5dp"
+               android:paddingBottom="5dp"
+               android:paddingRight="20dp"
+               android:paddingLeft="20dp"
+               android:layout_marginTop="10dp"
+               android:layout_gravity="center"
+               android:background="@drawable/login_btn_background"/>
+
+
+       </LinearLayout>
+
+
+   </ScrollView>
+
+
+</FrameLayout>
