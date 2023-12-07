@@ -53,7 +53,7 @@ public class MainLayout extends AppCompatActivity{
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Log.d("J",String.valueOf(item.getItemId()));
+                drawerLayout.closeDrawer(GravityCompat.START);
                 switch (item.getTitle().toString()){
 
                     case "Home":

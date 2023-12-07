@@ -29,13 +29,14 @@
                 android:id="@+id/gotToOrderList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="order List"
+                android:text="Order List"
+                android:textAllCaps="false"
                 android:layout_margin="10dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:background="@color/white"
+                android:background="@drawable/orderlist"
                 android:textColor="@color/green"
-                android:textSize="15dp"
+                android:textSize="13dp"
                 android:layout_gravity="center|end"/>
         </androidx.appcompat.widget.Toolbar>
 

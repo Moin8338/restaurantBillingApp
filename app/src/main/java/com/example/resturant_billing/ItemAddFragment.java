@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import com.example.resturant_billing.model.*;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -14,9 +16,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,8 +41,11 @@ public class ItemAddFragment extends Fragment{ //  implements View.OnClickListen
     private List<order_item> foodList= new ArrayList<order_item>();
     private List<order_item> finalOrder= new ArrayList<order_item>();
 
+    private List<order_item> filteredList=new ArrayList<order_item>();
+
     private String mParam1;
     private String mParam2;
+    private ArrayAdapter<order_item> adapter;
 
 
     public ItemAddFragment() {
@@ -97,7 +104,411 @@ public class ItemAddFragment extends Fragment{ //  implements View.OnClickListen
 //
         GridLayout foodItemContainer=(GridLayout) view.findViewById(R.id.foodItemGrid);
 
-        for (order_item item : foodList){
+
+
+        //filter item on input by name-----------------------------------------------
+        filteredList.addAll(foodList);
+
+        // Get reference to the MultiAutoCompleteTextView for searching by name
+        MultiAutoCompleteTextView searchByNameTextView = view.findViewById(R.id.searchByItem);
+
+        // Add TextWatcher to filter the food items based on the item name
+        searchByNameTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Filter the data based on the user input
+                    filteredList.clear();
+                    for (order_item item : foodList) {
+                        if (item.getName().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                            filteredList.add(item);
+                        }
+                    }
+
+                    if(filteredList.isEmpty()){
+                        Toast toast=Toast.makeText(getContext(),"No Item Found !!",Toast.LENGTH_SHORT);
+                        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL,0,0);
+                        toast.show();
+                        filteredList.addAll(foodList);
+                    }else{
+                        foodItemContainer.removeAllViews();
+                        for (order_item item : filteredList){
+                            // Create the main LinearLayout
+                            LinearLayout mainLayout = new LinearLayout(getContext());
+                            mainLayout.setBackground(getResources().getDrawable(R.drawable.itemcardbkg));
+                            mainLayout.setOrientation(LinearLayout.VERTICAL);
+                            mainLayout.setId(item.getId());
+                            mainLayout.setClickable(true);
+                            mainLayout.setPadding(
+                                    dpToPx(5),
+                                    dpToPx(5),
+                                    dpToPx(5),
+                                    dpToPx(5)
+                            );
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                    dpToPx(150),
+                                    dpToPx(130)
+                            );
+
+                            layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(10));
+
+                            mainLayout.setLayoutParams(layoutParams);
+                            mainLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                            mainLayout.setOrientation(LinearLayout.VERTICAL);
+
+                            // Create the TextView for the Food Item Name
+                            TextView foodItemTextView = new TextView(getContext());
+                            foodItemTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    dpToPx(80)
+                            ));
+                            foodItemTextView.setGravity(Gravity.CENTER_VERTICAL);
+                            foodItemTextView.setPadding(dpToPx(5), 0, 0, 0);
+                            foodItemTextView.setTextSize(17);
+                            foodItemTextView.setTextColor(getResources().getColor(R.color.white));
+                            foodItemTextView.setText(item.getName());
+
+                            // Create the horizontal line
+                            View horizontalLine = new View(getContext());
+                            horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    dpToPx(1)
+                            ));
+                            horizontalLine.setBackgroundColor(getResources().getColor(R.color.white));
+                            ((LinearLayout.LayoutParams) horizontalLine.getLayoutParams()).gravity = Gravity.CENTER_VERTICAL;
+
+                            // Create the nested LinearLayout for the EditText and TextViews
+                            LinearLayout nestedLayout = new LinearLayout(getContext());
+                            nestedLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    dpToPx(40)
+                            ));
+                            nestedLayout.setPadding(0,dpToPx(1),0,dpToPx(1));
+                            nestedLayout.setGravity(Gravity.CENTER);
+                            nestedLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                            // Create the EditText
+                            EditText editText = new EditText(getContext());
+                            editText.setLayoutParams(new LinearLayout.LayoutParams(
+                                    dpToPx(40),
+                                    dpToPx(30)
+                            ));
+                            editText.setPadding(0,0,0,0);
+                            editText.setGravity(Gravity.CENTER);
+                            editText.setBackground(getResources().getDrawable(R.drawable.edittexttransparentbkg));
+                            editText.setTextColor(getResources().getColor(R.color.white));
+                            editText.setTextSize(15);
+                            editText.setText(Integer.toString(item.getQty()));
+
+                            // Create the first TextView
+                            TextView firstTextView = new TextView(getContext());
+                            firstTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                    dpToPx(30),
+                                    dpToPx(30)
+                            ));
+                            firstTextView.setGravity(Gravity.CENTER);
+                            firstTextView.setTextColor(getResources().getColor(R.color.white));
+                            firstTextView.setTextSize(20);
+                            firstTextView.setText("--");
+
+
+                            //decrease the quantity of item---------------------------------------
+                            //--------------------------------------------------------------------
+                            firstTextView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(item.getQty() > 0){
+                                        item.setQty(item.getQty()-1);
+                                        editText.setText(Integer.toString(item.getQty()));
+                                        ArrayList<String> arr = new ArrayList<>();
+
+                                        int pos  = getPosition(order,item.getName());
+                                        Log.d("W",String.valueOf(pos));
+                                        order.remove(pos);
+                                        arr.add(item.getName());
+                                        arr.add(String.valueOf(item.getPrice()));
+                                        arr.add(String.valueOf(item.getQty()));
+                                        order.add(arr);
+
+                                    }
+                                }
+                            });
+
+                            //---------------------------------------------------------
+
+                            // Create the second TextView
+                            TextView secondTextView = new TextView(getContext());
+                            secondTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                    dpToPx(50),
+                                    dpToPx(40)
+                            ));
+                            secondTextView.setGravity(Gravity.CENTER | Gravity.END);
+                            secondTextView.setTextColor(getResources().getColor(R.color.white));
+                            secondTextView.setTextSize(15);
+                            secondTextView.setText(Integer.toString(item.getPrice()));
+
+                            // Add views to the nested layout
+                            nestedLayout.addView(editText);
+                            nestedLayout.addView(firstTextView);
+                            nestedLayout.addView(secondTextView);
+
+                            // Add views to the main layout
+                            mainLayout.addView(foodItemTextView);
+                            mainLayout.addView(horizontalLine);
+                            mainLayout.addView(nestedLayout);
+
+                            //increase the quantity of item ----------------------------------------------------
+                            //----------------------------------------------------------------------------------
+                            mainLayout.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    item.setQty(item.getQty()+1);
+                                    editText.setText(Integer.toString(item.getQty()));
+                                    ArrayList<String> arr = new ArrayList<>();
+                                    boolean res = checkInOrder(order,item.getName());
+                                    Log.d("W",String.valueOf(res));
+                                    if(!res){
+                                        arr.add(item.getName());
+                                        arr.add(String.valueOf(item.getPrice()));
+                                        arr.add(String.valueOf(item.getQty()));
+                                        order.add(arr);
+                                    }
+                                    else
+                                    {
+                                        int pos  = getPosition(order,item.getName());
+                                        Log.d("W",String.valueOf(pos));
+                                        order.remove(pos);
+                                        arr.add(item.getName());
+                                        arr.add(String.valueOf(item.getPrice()));
+                                        arr.add(String.valueOf(item.getQty()));
+                                        order.add(arr);
+                                    }
+                                }
+                            });
+
+
+                            foodItemContainer.addView(mainLayout);
+                        }
+                    }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+
+        //---------------------------------------------------------------------------
+
+
+        //filter item on input by category-----------------------------------------------
+
+        // Get reference to the MultiAutoCompleteTextView for searching by name
+        MultiAutoCompleteTextView searchByCategoryTextView = view.findViewById(R.id.searchByCategory);
+
+        // Add TextWatcher to filter the food items based on the item name
+        searchByCategoryTextView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int start, int before, int count) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
+                // Filter the data based on the user input
+                filteredList.clear();
+                for (order_item item : foodList) {
+                    if (item.getCategory().toLowerCase().contains(charSequence.toString().toLowerCase())) {
+                        filteredList.add(item);
+                    }
+                }
+
+                if(filteredList.isEmpty()){
+                    Toast toast=Toast.makeText(getContext(),"No Item Found !!",Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL,0,0);
+                    toast.show();
+                    filteredList.addAll(foodList);
+                }
+                else{
+                    foodItemContainer.removeAllViews();
+                    for (order_item item : filteredList){
+                        // Create the main LinearLayout
+                        LinearLayout mainLayout = new LinearLayout(getContext());
+                        mainLayout.setBackground(getResources().getDrawable(R.drawable.itemcardbkg));
+                        mainLayout.setOrientation(LinearLayout.VERTICAL);
+                        mainLayout.setId(item.getId());
+                        mainLayout.setClickable(true);
+                        mainLayout.setPadding(
+                                dpToPx(5),
+                                dpToPx(5),
+                                dpToPx(5),
+                                dpToPx(5)
+                        );
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                dpToPx(150),
+                                dpToPx(130)
+                        );
+
+                        layoutParams.setMargins(dpToPx(10),dpToPx(10),dpToPx(10),dpToPx(10));
+
+                        mainLayout.setLayoutParams(layoutParams);
+                        mainLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+                        mainLayout.setOrientation(LinearLayout.VERTICAL);
+
+                        // Create the TextView for the Food Item Name
+                        TextView foodItemTextView = new TextView(getContext());
+                        foodItemTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                dpToPx(80)
+                        ));
+                        foodItemTextView.setGravity(Gravity.CENTER_VERTICAL);
+                        foodItemTextView.setPadding(dpToPx(5), 0, 0, 0);
+                        foodItemTextView.setTextSize(17);
+                        foodItemTextView.setTextColor(getResources().getColor(R.color.white));
+                        foodItemTextView.setText(item.getName());
+
+                        // Create the horizontal line
+                        View horizontalLine = new View(getContext());
+                        horizontalLine.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                dpToPx(1)
+                        ));
+                        horizontalLine.setBackgroundColor(getResources().getColor(R.color.white));
+                        ((LinearLayout.LayoutParams) horizontalLine.getLayoutParams()).gravity = Gravity.CENTER_VERTICAL;
+
+                        // Create the nested LinearLayout for the EditText and TextViews
+                        LinearLayout nestedLayout = new LinearLayout(getContext());
+                        nestedLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                dpToPx(40)
+                        ));
+                        nestedLayout.setPadding(0,dpToPx(1),0,dpToPx(1));
+                        nestedLayout.setGravity(Gravity.CENTER);
+                        nestedLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                        // Create the EditText
+                        EditText editText = new EditText(getContext());
+                        editText.setLayoutParams(new LinearLayout.LayoutParams(
+                                dpToPx(40),
+                                dpToPx(30)
+                        ));
+                        editText.setPadding(0,0,0,0);
+                        editText.setGravity(Gravity.CENTER);
+                        editText.setBackground(getResources().getDrawable(R.drawable.edittexttransparentbkg));
+                        editText.setTextColor(getResources().getColor(R.color.white));
+                        editText.setTextSize(15);
+                        editText.setText(Integer.toString(item.getQty()));
+
+                        // Create the first TextView
+                        TextView firstTextView = new TextView(getContext());
+                        firstTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                dpToPx(30),
+                                dpToPx(30)
+                        ));
+                        firstTextView.setGravity(Gravity.CENTER);
+                        firstTextView.setTextColor(getResources().getColor(R.color.white));
+                        firstTextView.setTextSize(20);
+                        firstTextView.setText("--");
+
+
+                        //decrease the quantity of item---------------------------------------
+                        //--------------------------------------------------------------------
+                        firstTextView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if(item.getQty() > 0){
+                                    item.setQty(item.getQty()-1);
+                                    editText.setText(Integer.toString(item.getQty()));
+                                    ArrayList<String> arr = new ArrayList<>();
+
+                                    int pos  = getPosition(order,item.getName());
+                                    Log.d("W",String.valueOf(pos));
+                                    order.remove(pos);
+                                    arr.add(item.getName());
+                                    arr.add(String.valueOf(item.getPrice()));
+                                    arr.add(String.valueOf(item.getQty()));
+                                    order.add(arr);
+
+                                }
+                            }
+                        });
+
+                        //---------------------------------------------------------
+
+                        // Create the second TextView
+                        TextView secondTextView = new TextView(getContext());
+                        secondTextView.setLayoutParams(new LinearLayout.LayoutParams(
+                                dpToPx(50),
+                                dpToPx(40)
+                        ));
+                        secondTextView.setGravity(Gravity.CENTER | Gravity.END);
+                        secondTextView.setTextColor(getResources().getColor(R.color.white));
+                        secondTextView.setTextSize(15);
+                        secondTextView.setText(Integer.toString(item.getPrice()));
+
+                        // Add views to the nested layout
+                        nestedLayout.addView(editText);
+                        nestedLayout.addView(firstTextView);
+                        nestedLayout.addView(secondTextView);
+
+                        // Add views to the main layout
+                        mainLayout.addView(foodItemTextView);
+                        mainLayout.addView(horizontalLine);
+                        mainLayout.addView(nestedLayout);
+
+                        //increase the quantity of item ----------------------------------------------------
+                        //----------------------------------------------------------------------------------
+                        mainLayout.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                item.setQty(item.getQty()+1);
+                                editText.setText(Integer.toString(item.getQty()));
+                                ArrayList<String> arr = new ArrayList<>();
+                                boolean res = checkInOrder(order,item.getName());
+                                Log.d("W",String.valueOf(res));
+                                if(!res){
+                                    arr.add(item.getName());
+                                    arr.add(String.valueOf(item.getPrice()));
+                                    arr.add(String.valueOf(item.getQty()));
+                                    order.add(arr);
+                                }
+                                else
+                                {
+                                    int pos  = getPosition(order,item.getName());
+                                    Log.d("W",String.valueOf(pos));
+                                    order.remove(pos);
+                                    arr.add(item.getName());
+                                    arr.add(String.valueOf(item.getPrice()));
+                                    arr.add(String.valueOf(item.getQty()));
+                                    order.add(arr);
+                                }
+                            }
+                        });
+
+
+                        foodItemContainer.addView(mainLayout);
+                    }
+                }
+
+
+
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+
+        //---------------------------------------------------------------------------
+
+
+        for (order_item item : filteredList){
             // Create the main LinearLayout
             LinearLayout mainLayout = new LinearLayout(getContext());
             mainLayout.setBackground(getResources().getDrawable(R.drawable.itemcardbkg));
@@ -316,6 +727,7 @@ public class ItemAddFragment extends Fragment{ //  implements View.OnClickListen
         float widthInPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, displayMetrics);
         return (int) widthInPx;
     }
+
 
 
 

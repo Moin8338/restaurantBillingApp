@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
@@ -61,6 +62,8 @@ public class ItemsOnTable extends Fragment {
 
     private static int counter = 0;
 
+    String uniqueId;
+
     private List<order_item> foodList= new ArrayList<order_item>();
 
     public ItemsOnTable() {
@@ -89,53 +92,80 @@ public class ItemsOnTable extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        DBHelper dbHelper = new DBHelper(getContext());
-        SharedPreferences preferences = getActivity().getSharedPreferences("id", Context.MODE_PRIVATE);
-        int id = preferences.getInt("userid",0);
-        ArrayList<String> details = dbHelper.getDetails(id);
-
-
         View view=inflater.inflate(R.layout.fragment_items_on_table, container, false);
 
-        TextView restName=(TextView) view.findViewById(R.id.restaurantName);
-        TextView restAddress=(TextView) view.findViewById(R.id.restaurantAddress);
-        TextView restGst=(TextView) view.findViewById(R.id.restaurantGst);
-        TextView ownerName=(TextView) view.findViewById(R.id.ownerName);
-        TextView ownerPhone=(TextView) view.findViewById(R.id.onwerphone);
-        TextView billNo=(TextView) view.findViewById(R.id.billNumber);
 
-        restName.setText(details.get(4));
-        restGst.setText("GST N0 : \n"+details.get(6));
-        ownerName.setText("Owner Name : \n"+details.get(5));
-        ownerPhone.setText("Phone : \n"+details.get(2));
-        restAddress.setText(details.get(7));
+        if(getArguments() == null && ItemAddFragment.order.size() == 0 ){
 
-        TableLayout tableLayout = view.findViewById(R.id.foodListTable);
+            LinearLayout validateLayout=(LinearLayout) view.findViewById(R.id.viewLinearLayout);
+
+            validateLayout.removeAllViews();
+
+            TextView notfound=new TextView(getContext());
+
+            notfound.setText("Oops, Not Found !!");
+            notfound.setTextSize(30);
+            notfound.setTextColor(getResources().getColor(R.color.black));
+            notfound.setGravity(Gravity.CENTER);
+            notfound.setPadding(0,400,0,20);
+
+            TextView message=new TextView(getContext());
+
+            message.setText("Please add Item before generating a bill");
+            message.setTextSize(10);
+            message.setTextColor(getResources().getColor(R.color.black));
+            message.setGravity(Gravity.CENTER);
+
+            validateLayout.addView(notfound);
+            validateLayout.addView(message);
+
+        }else{
+            DBHelper dbHelper = new DBHelper(getContext());
+            SharedPreferences preferences = getActivity().getSharedPreferences("id", Context.MODE_PRIVATE);
+            int id = preferences.getInt("userid",0);
+            ArrayList<String> details = dbHelper.getDetails(id);
 
 
-        //generate unique id using date and unique randome id --------------------
+
+
+            TextView restName=(TextView) view.findViewById(R.id.restaurantName);
+            TextView restAddress=(TextView) view.findViewById(R.id.restaurantAddress);
+            TextView restGst=(TextView) view.findViewById(R.id.restaurantGst);
+            TextView ownerName=(TextView) view.findViewById(R.id.ownerName);
+            TextView ownerPhone=(TextView) view.findViewById(R.id.onwerphone);
+            TextView billNo=(TextView) view.findViewById(R.id.billNumber);
+
+            restName.setText(details.get(4));
+            restGst.setText("GST N0 : \n"+details.get(6));
+            ownerName.setText("Owner Name : \n"+details.get(5));
+            ownerPhone.setText("Phone : \n"+details.get(2));
+            restAddress.setText(details.get(7));
+
+            TableLayout tableLayout = view.findViewById(R.id.foodListTable);
+
+
+            //generate unique id using date and unique randome id --------------------
 //        -----------------------------------------------------------------------
 
-        String uniqueId=generateUniqueId().substring(0,6);
+            uniqueId=generateUniqueId();
+            billNo.setText("Bill No : \n"+uniqueId.substring(uniqueId.length()-7));
 
-        billNo.setText("Bill No : \n"+uniqueId);
+            //        -----------------------------------------------------------------------
+            //        -----------------------------------------------------------------------
 
-        //        -----------------------------------------------------------------------
-        //        -----------------------------------------------------------------------
+            TableLayout bill=(TableLayout) view.findViewById(R.id.billTable);
+            view.findViewById(R.id.removeBill).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ItemAddFragment.order.clear();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout,new ItemsOnTable());
+                    fragmentTransaction.commit();
+                }
+            });
 
-        TableLayout bill=(TableLayout) view.findViewById(R.id.billTable);
-        view.findViewById(R.id.removeBill).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ItemAddFragment.order.clear();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout,new ItemsOnTable());
-                fragmentTransaction.commit();
-            }
-        });
-
-        if(getArguments() == null){
+            if(getArguments() == null){
 //            foodList.add(new order_item(11,"Pizza Margherita",180,"pizza",1,180));
 //            foodList.add(new order_item(12,"Pizza Vegetarian",175,"pizza",2,175*2));
 //            foodList.add(new order_item(13,"Veggie Burger",120,"burger",1,120));
@@ -147,180 +177,182 @@ public class ItemsOnTable extends Fragment {
 //            foodList.add(new order_item(19,"Paneer Tikka Masala",220,"special",1,220));
 //            foodList.add(new order_item(20,"Cola",30,"Beverages",2,60));
 //            foodList.add(new order_item(21,"Mango Lassi",60,"Beverages",1,60));
-            for(int i = 0 ; i < ItemAddFragment.order.size() ; i++)
-            {
-                foodList.add(new order_item(i+1 , ItemAddFragment.order.get(i).get(0).toString(),Integer.parseInt(ItemAddFragment.order.get(i).get(1).toString()),"",Integer.parseInt(ItemAddFragment.order.get(i).get(2).toString()),Integer.parseInt(ItemAddFragment.order.get(i).get(2).toString()) * Integer.parseInt(ItemAddFragment.order.get(i).get(1).toString())));
+                for(int i = 0 ; i < ItemAddFragment.order.size() ; i++)
+                {
+                    foodList.add(new order_item(i+1 , ItemAddFragment.order.get(i).get(0).toString(),Integer.parseInt(ItemAddFragment.order.get(i).get(1).toString()),"",Integer.parseInt(ItemAddFragment.order.get(i).get(2).toString()),Integer.parseInt(ItemAddFragment.order.get(i).get(2).toString()) * Integer.parseInt(ItemAddFragment.order.get(i).get(1).toString())));
 
+                }
+            }else{
+                Toast.makeText(getContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
             }
-        }else{
-            Toast.makeText(getContext(), "Something went Wrong", Toast.LENGTH_SHORT).show();
-        }
 
 
 
-        // Inflate the layout for this fragment
-        // Create a new table row
-        int i=1;
-        int sum=0;
-       for(order_item item : foodList){
-           sum+=item.getQty()*item.getPrice();
-           TableRow row = new TableRow(getContext());
-           row.setLayoutParams(new TableLayout.LayoutParams(
-                   TableLayout.LayoutParams.MATCH_PARENT,
-                   TableLayout.LayoutParams.WRAP_CONTENT));
-           row.setPadding(5, 0, 5, 0);
-           TextView index = new TextView(getContext());
-           index.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT));
-           index.setText(Integer.toString(i));
-           index.setGravity(Gravity.CENTER);
-           index.setTextColor(getResources().getColor(R.color.black));
-           index.setLayoutParams(new TableRow.LayoutParams(
-                   0,
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   0.5f));
+            // Inflate the layout for this fragment
+            // Create a new table row
+            int i=1;
+            int sum=0;
+            for(order_item item : foodList){
+                sum+=item.getQty()*item.getPrice();
+                TableRow row = new TableRow(getContext());
+                row.setLayoutParams(new TableLayout.LayoutParams(
+                        TableLayout.LayoutParams.MATCH_PARENT,
+                        TableLayout.LayoutParams.WRAP_CONTENT));
+                row.setPadding(5, 0, 5, 0);
+                TextView index = new TextView(getContext());
+                index.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
+                index.setText(Integer.toString(i));
+                index.setGravity(Gravity.CENTER);
+                index.setTextColor(getResources().getColor(R.color.black));
+                index.setLayoutParams(new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        0.5f));
 
-           ///Item name --------------------------
+                ///Item name --------------------------
 
-           TextView itemname = new TextView(getContext());
-           itemname.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT));
-           itemname.setText(item.getName());
-           itemname.setGravity(Gravity.CENTER);
-           itemname.setTextColor(getResources().getColor(R.color.black));
-           itemname.setLayoutParams(new TableRow.LayoutParams(
-                   0,
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   2f));
+                TextView itemname = new TextView(getContext());
+                itemname.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
+                itemname.setText(item.getName());
+                itemname.setGravity(Gravity.CENTER);
+                itemname.setTextColor(getResources().getColor(R.color.black));
+                itemname.setLayoutParams(new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        2f));
 
-           /////  item Quantity ----------------------
+                /////  item Quantity ----------------------
 
-           TextView itemQty = new TextView(getContext());
-           itemQty.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT));
-           itemQty.setText(Integer.toString(item.getQty()));
-           itemQty.setGravity(Gravity.CENTER);
-           itemQty.setTextColor(getResources().getColor(R.color.black));
-           itemQty.setLayoutParams(new TableRow.LayoutParams(
-                   0,
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   0.5f));
-
-
-           // item Total --------------------------------
-
-           TextView itemTotal = new TextView(getContext());
-           itemTotal.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT));
-           itemTotal.setTextColor(getResources().getColor(R.color.black));
-           itemTotal.setText(Integer.toString(item.getQty() * item.getPrice()));
-           itemTotal.setGravity(Gravity.CENTER);
-           itemTotal.setLayoutParams(new TableRow.LayoutParams(
-                   0,
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   1f));
-           row.addView(index);
-           row.addView(itemname);
-           row.addView(itemQty);
-           row.addView(itemTotal);
-           bill.addView(row);
-
-           //billStructure ---------------------------------------------------------------
-           //----------------------------------------------------------------------------
+                TextView itemQty = new TextView(getContext());
+                itemQty.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
+                itemQty.setText(Integer.toString(item.getQty()));
+                itemQty.setGravity(Gravity.CENTER);
+                itemQty.setTextColor(getResources().getColor(R.color.black));
+                itemQty.setLayoutParams(new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        0.5f));
 
 
-            TableRow tableRow = new TableRow(getContext());
-           if(i%2==0){
-               tableRow.setBackgroundColor(getResources().getColor(R.color.white));
-           }else{
-               tableRow.setBackgroundColor(getResources().getColor(R.color.tableRowColor));
+                // item Total --------------------------------
 
-           }
-           tableRow.setPadding(5, 5, 5, 5);
+                TextView itemTotal = new TextView(getContext());
+                itemTotal.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT));
+                itemTotal.setTextColor(getResources().getColor(R.color.black));
+                itemTotal.setText(Integer.toString(item.getQty() * item.getPrice()));
+                itemTotal.setGravity(Gravity.CENTER);
+                itemTotal.setLayoutParams(new TableRow.LayoutParams(
+                        0,
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        1f));
+                row.addView(index);
+                row.addView(itemname);
+                row.addView(itemQty);
+                row.addView(itemTotal);
+                bill.addView(row);
 
-           // Create the first TextView
-           TextView index1 = new TextView(getContext());
-           index1.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
-           index1.setText(Integer.toString(i));
-           index1.setTextColor(getResources().getColor(R.color.black));
+                //billStructure ---------------------------------------------------------------
+                //----------------------------------------------------------------------------
 
-           // Create the second TextView
-           TextView itemName = new TextView(getContext());
-           itemName.setTextColor(getResources().getColor(R.color.black));
-           itemName.setLayoutParams(new TableRow.LayoutParams(
-                   200, // Set the width in pixels or use appropriate measure
-                   TableRow.LayoutParams.WRAP_CONTENT, 2f));
-           itemName.setText(item.getName());
 
-           // Create the third TextView
-           TextView qty = new TextView(getContext());
-           qty.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
-           qty.setText(Integer.toString(item.getQty()));
-           qty.setTextColor(getResources().getColor(R.color.black));
+                TableRow tableRow = new TableRow(getContext());
+                if(i%2==0){
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.white));
+                }else{
+                    tableRow.setBackgroundColor(getResources().getColor(R.color.tableRowColor));
 
-           //create the fourth TextView
-           TextView price = new TextView(getContext());
-           price.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
-           price.setText(Integer.toString(item.getPrice()));
-           price.setTextColor(getResources().getColor(R.color.black));
+                }
+                tableRow.setPadding(5, 5, 5, 5);
 
-           // Create the fifth TextView
-           TextView totalOfitem = new TextView(getContext());
-           totalOfitem.setLayoutParams(new TableRow.LayoutParams(
-                   TableRow.LayoutParams.WRAP_CONTENT,
-                   TableRow.LayoutParams.WRAP_CONTENT, 1f));
-           totalOfitem.setText(Integer.toString(item.getQty() * item.getPrice()));
-           totalOfitem.setTextColor(getResources().getColor(R.color.black));
+                // Create the first TextView
+                TextView index1 = new TextView(getContext());
+                index1.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
+                index1.setText(Integer.toString(i));
+                index1.setTextColor(getResources().getColor(R.color.black));
 
-           // Add TextViews to the TableRow
-           tableRow.addView(index1);
-           tableRow.addView(itemName);
-           tableRow.addView(qty);
-           tableRow.addView(price);
-           tableRow.addView(totalOfitem);
+                // Create the second TextView
+                TextView itemName = new TextView(getContext());
+                itemName.setTextColor(getResources().getColor(R.color.black));
+                itemName.setLayoutParams(new TableRow.LayoutParams(
+                        200, // Set the width in pixels or use appropriate measure
+                        TableRow.LayoutParams.WRAP_CONTENT, 2f));
+                itemName.setText(item.getName());
 
-           // Add TableRow to your TableLayout (assuming you have a TableLayout in your XML layout)
+                // Create the third TextView
+                TextView qty = new TextView(getContext());
+                qty.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
+                qty.setText(Integer.toString(item.getQty()));
+                qty.setTextColor(getResources().getColor(R.color.black));
 
-           tableLayout.addView(tableRow);
+                //create the fourth TextView
+                TextView price = new TextView(getContext());
+                price.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT, 0.5f));
+                price.setText(Integer.toString(item.getPrice()));
+                price.setTextColor(getResources().getColor(R.color.black));
 
-           i++;
-       }
+                // Create the fifth TextView
+                TextView totalOfitem = new TextView(getContext());
+                totalOfitem.setLayoutParams(new TableRow.LayoutParams(
+                        TableRow.LayoutParams.WRAP_CONTENT,
+                        TableRow.LayoutParams.WRAP_CONTENT, 1f));
+                totalOfitem.setText(Integer.toString(item.getQty() * item.getPrice()));
+                totalOfitem.setTextColor(getResources().getColor(R.color.black));
 
-        TextView total1=(TextView) view.findViewById(R.id.totalPrice);
-        total1.setText(Integer.toString(sum));
+                // Add TextViews to the TableRow
+                tableRow.addView(index1);
+                tableRow.addView(itemName);
+                tableRow.addView(qty);
+                tableRow.addView(price);
+                tableRow.addView(totalOfitem);
+
+                // Add TableRow to your TableLayout (assuming you have a TableLayout in your XML layout)
+
+                tableLayout.addView(tableRow);
+
+                i++;
+            }
+
+            TextView total1=(TextView) view.findViewById(R.id.totalPrice);
+            total1.setText(Integer.toString(sum));
 //
-       TextView total=(TextView) view.findViewById(R.id.totalCost);
-       total.setText(Integer.toString(sum));
+            TextView total=(TextView) view.findViewById(R.id.totalCost);
+            total.setText(Integer.toString(sum));
 
 
 
 
-        LinearLayout billstructure=(LinearLayout) view.findViewById(R.id.billStructure);
+            LinearLayout billstructure=(LinearLayout) view.findViewById(R.id.billStructure);
 
-        AppCompatButton printBtn=(AppCompatButton) view.findViewById(R.id.printBill);
+            AppCompatButton printBtn=(AppCompatButton) view.findViewById(R.id.printBill);
 
-        printBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                generatePDFfromView(billstructure,uniqueId);
-                ItemAddFragment.order.clear();
-                FragmentManager fragmentManager = getFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout,new ItemsOnTable());
-                fragmentTransaction.commit();
-            }
-        });
+            printBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    generatePDFfromView(billstructure,uniqueId);
+                    ItemAddFragment.order.clear();
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.frame_layout,new ItemsOnTable());
+                    fragmentTransaction.commit();
+                }
+            });
 
+
+        }
 
         return view;
     }
